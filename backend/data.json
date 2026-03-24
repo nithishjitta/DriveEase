@@ -1,0 +1,244 @@
+{
+  "cars":[
+  {
+    "name": "Toyota Fortuner",
+    "city": "Hyderabad",
+    "pricePerDay": 4200,
+    "type": "SUV",
+    "seats": 7,
+    "fuelType": "Diesel",
+    "rating": 4.7,
+    "images":["https://stimg.cardekho.com/images/carexteriorimages/630x420/Toyota/Fortuner/10904/1755846017683/front-left-side-47.jpg?imwidth=420&impolicy=resize","https://img.autocarpro.in/autocarpro/709f4883-7b5d-48a5-8aee-b556afd7e4f4_Fortuner-Leader-white.jpg?w=750&h=490&q=75&c=1"]
+  },
+  {
+    "name": "Honda City",
+    "city": "Delhi",
+    "pricePerDay": 2000,
+    "type": "Sedan",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.5,
+    "images":["https://www.carbike360.com/_next/image?url=https%3A%2F%2Fs3.ap-south-1.amazonaws.com%2Fcb360static%2Fuploads%2Ff9705e5c-63a7-4728-9198-b9c7c45c54db-small-Honda%2520City%2520%25281%2529.avif&w=3840&q=75"]
+  },
+  {
+    "name": "BMW X5",
+    "city": "Mumbai",
+    "pricePerDay": 4500,
+    "type": "Luxury",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.8,
+    "images":["https://imgd.aeplcdn.com/664x374/n/cw/ec/152681/x5-exterior-right-front-three-quarter-6.jpeg?isig=0&q=80", "https://ymimg1.b8cdn.com/resized/car_model/13169/pictures/15989445/webp_mobile_listing_main_ext-3231303031.webp"]
+  },
+  {
+    "name": "Hyundai Creta",
+    "city": "Chennai",
+    "pricePerDay": 2200,
+    "type": "SUV",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.6,
+    "images":["https://stimg.cardekho.com/images/carexteriorimages/930x620/Hyundai/Creta/7695/1651645683867/front-left-side-47.jpg"]
+  },
+  {
+    "name": "Kia Seltos",
+    "city": "Hyderabad",
+    "pricePerDay": 2300,
+    "type": "SUV",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.5,
+    "images":["https://stimg.cardekho.com/images/carexteriorimages/630x420/Kia/Seltos/10422/1766143788250/front-left-side-47.jpg?imwidth=420&impolicy=resize"]
+  },
+  {
+    "name": "Tata Nexon",
+    "city": "Delhi",
+    "pricePerDay": 1900,
+    "type": "SUV",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.4,
+    "images":["https://imgd.aeplcdn.com/664x374/n/p7uambb_1688457.jpg?q=80"]
+  },
+  {
+    "name": "Mahindra Thar",
+    "city": "Mumbai",
+    "pricePerDay": 3000,
+    "type": "SUV",
+    "seats": 4,
+    "fuelType": "Diesel",
+    "rating": 4.6,
+    "images":["https://images.overdrive.in/wp-content/uploads/2024/02/Mahindra-Thar-Earth-Edition.jpg"]
+  },
+  {
+    "name": "Volkswagen Virtus",
+    "city": "Chennai",
+    "pricePerDay": 2100,
+    "type": "Sedan",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.5,
+    "images":["https://imgd.aeplcdn.com/1600x900/n/cw/ec/188663/volkswagen-virtus-right-front-three-quarter2.jpeg?isig=0&q=75"]
+  },
+  {
+    "name": "Skoda Slavia",
+    "city": "Hyderabad",
+    "pricePerDay": 2100,
+    "type": "Sedan",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.4,
+    "images":["https://imgd.aeplcdn.com/1056x594/n/hog6ihb_1872578.jpg?q=80"]
+  },
+  {
+    "name": "Toyota Innova Crysta",
+    "city": "Delhi",
+    "pricePerDay": 2800,
+    "type": "MPV",
+    "seats": 7,
+    "fuelType": "Diesel",
+    "rating": 4.7,
+    "images":["https://www.jazzycars.in/wp-content/uploads/2023/11/WhatsApp-Image-2023-12-02-at-11.12.29.jpeg"]
+  },
+  {
+    "name": "Honda Civic",
+    "city": "Mumbai",
+    "pricePerDay": 2500,
+    "type": "Sedan",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.6,
+    "images":["https://imgd.aeplcdn.com/642x336/n/cw/ec/27074/civic-exterior-right-front-three-quarter-148156.jpeg?q=80"]
+  },
+  {
+    "name": "Ford EcoSport",
+    "city": "Bangalore",
+    "pricePerDay": 1800,
+    "type": "SUV",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.3,
+    "images":["https://imgd.aeplcdn.com/1920x1080/n/cw/ec/40369/ecosport-exterior-left-front-three-quarter.jpeg?q=80&q=80"]
+  },
+  {
+    "name": "Hyundai Verna",
+    "city": "Chennai",
+    "pricePerDay": 2000,
+    "type": "Sedan",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.4,
+    "images":["https://imgd.aeplcdn.com/642x336/n/cw/ec/41197/hyundai-verna-right-front-three-quarter7.jpeg?q=80"]
+  },
+  {
+    "name": "Kia Sonet",
+    "city": "Hyderabad",
+    "pricePerDay": 1900,
+    "type": "SUV",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.4,
+    "images":["https://malikkia.in/wp-content/uploads/2024/05/kv-d-1.webp"]
+  },
+  {
+    "name": "Tata Harrier",
+    "city": "Bangalore",
+    "pricePerDay": 2600,
+    "type": "SUV",
+    "seats": 5,
+    "fuelType": "Diesel",
+    "rating": 4.6,
+    "images":["https://static.toiimg.com/thumb/msid-104216915,imgsize-793266,width-400,resizemode-4/104216915.jpg"]
+  },
+  {
+    "name": "Mahindra XUV700",
+    "city": "Chennai",
+    "pricePerDay": 3000,
+    "type": "SUV",
+    "seats": 7,
+    "fuelType": "Diesel",
+    "rating": 4.8,
+    "images":["https://stimg.cardekho.com/images/carexteriorimages/360x240/Mahindra/Mahindra-XUV500-2020/1551347856168/047.jpg"]
+  },
+  {
+    "name": "Toyota Camry",
+    "city": "Hyderabad",
+    "pricePerDay": 3500,
+    "type": "Sedan",
+    "seats": 5,
+    "fuelType": "Hybrid",
+    "rating": 4.7,
+    "images":["https://di-uploads-pod9.dealerinspire.com/burnsvilletoyota/uploads/2024/12/2025-Toyota-Camry-at-Burnsville-Toyota.jpg"]
+  },
+  {
+    "name": "Honda Amaze",
+    "city": "Delhi",
+    "pricePerDay": 1600,
+    "type": "Sedan",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.3,
+    "images":["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA2G-W1YsP_5PEZn6j29pE4Rdq89NmhaN_K2uuzGCjMDsMdh6bxQxg45lbwRZb5yUfuTas0raSyER-myQq6xiCoL-Y6E6SJ-_NDUJwTba8AA&s=10"]
+  },
+  {
+    "name": "Hyundai Venue",
+    "city": "Chennai",
+    "pricePerDay": 1800,
+    "type": "SUV",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.4,
+    "images":["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxzJ_PGyipZ23HPf1de82ReB8Xkqri35U9Up1yZ_H838s11MupvGafDj0h6UEe5YcWUuw0lPZTzn4-9EQPAOUNzkQxJWY0-XL_YbNSS8lftw&s=10"]
+  },
+  {
+    "name": "Honda Jazz",
+    "city": "Mumbai",
+    "pricePerDay": 1700,
+    "type": "Hatchback",
+    "seats": 5,
+    "fuelType": "Petrol",
+    "rating": 4.4,
+    "images":["https://stimg.cardekho.com/images/carexteriorimages/630x420/Honda/Jazz/6489/1677825341880/front-left-side-47.jpg?tr=w-664"]
+  },
+  {
+    "name": "Ford Endeavour",
+    "city": "Bangalore",
+    "pricePerDay": 4000,
+    "type": "SUV",
+    "seats": 7,
+    "fuelType": "Diesel",
+    "rating": 4.7,
+    "images":["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJEfsL_2zBm9TUod84Xo3zslRaFxiSr-p5Cvyv3ytDZXoBWgqdqJUAyMh65G-YE6wK7ZkWqOn44wtH-vrhjgonGc7zef2XHJdq4kDFvCpb&s=10"]
+  },
+  {
+    "name": "Hyundai Tucson",
+    "city": "Chennai",
+    "pricePerDay": 3500,
+    "type": "SUV",
+    "seats": 5,
+    "fuelType": "Diesel",
+    "rating": 4.6,
+    "images":["https://imgd.aeplcdn.com/664x374/n/cw/ec/166917/tucson-facelift-exterior-left-front-three-quarter.jpeg?isig=0&q=80"]
+  },
+  {
+    "name": "Kia Carnival",
+    "city": "Hyderabad",
+    "pricePerDay": 5000,
+    "type": "Luxury MPV",
+    "seats": 7,
+    "fuelType": "Diesel",
+    "rating": 4.8,
+    "images":["https://stimg.cardekho.com/images/carexteriorimages/630x420/Kia/Carnival/8001/1755866555419/front-left-side-47.jpg?tr=w-664"]
+  },
+  {
+    "name": "Tata Safari",
+    "city": "Delhi",
+    "pricePerDay": 2800,
+    "type": "SUV",
+    "seats": 7,
+    "fuelType": "Diesel",
+    "rating": 4.6,
+    "images":["https://static-cdn.cars24.com/prod/auto-news24-cms/Newsroom/2024/10/30/00a23ff3-78fd-48e7-9759-6d9eb855f24b-tata-safari.webp?w=356&dpr=2.625&optimize=low&format=auto&quality=50"]
+  }
+  ]
+}
