@@ -1,22 +1,50 @@
 import React from 'react'
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import eyeOpenIcon from '../assets/eye_icon.svg';
+import eyeCloseIcon from '../assets/eye_close_icon.svg';
 
 function SignInPage({ setPage, setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
- 
-  const handleSubmit = () => {
+const navigate = useNavigate();
+
+  const handleSubmit = async() => {
     setError("");
     if (!email || !password) { setError("Please fill in all fields."); return; }
     if (!email.includes("@")) { setError("Please enter a valid email."); return; }
-    setLoading(true);
-    setTimeout(() => {
-      setUser({ name: email.split("@")[0], email });
-      setPage("home");
-    }, 1200);
+    
+    try{
+        setLoading(true);
+        const res = await fetch("http://localhost:3000/signin", {
+          method: "POST",
+          headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // 🔥 IMPORTANT for cookies
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      })
+      const data = await res.json();
+      if(res.ok){
+        setUser(data.user);
+        navigate("/");
+      }
+      else{
+        setError(data.message);
+      }
+    }
+    catch (err) {
+      setError("Invalid email or password.");
+    }
+    finally {
+      setLoading(false);
+    }
   };
  
   return (
@@ -41,7 +69,7 @@ function SignInPage({ setPage, setUser }) {
         <p className="auth-sub">
           Don't have an account?{" "}
           <Link className="auth-sub" to="/signup" style={{all:"unset",color:"var(--gold)",fontWeight:700,cursor:"pointer",textDecoration:"underline",textDecorationColor:"rgba(212,168,83,0.4)"}}
-            onClick={() => setPage("signup")}>Create one free</Link>
+            onClick={() => navigate("/signup")}>Create one free</Link>
         </p>
  
         <div className="form-grp">
@@ -50,10 +78,13 @@ function SignInPage({ setPage, setUser }) {
             <input className="form-input" type="email" placeholder="you@example.com"
               value={email} onChange={e => setEmail(e.target.value)}/>
           </div>
-          <div className="form-field">
+          <div className="form-field password-field">
             <label className="form-label">Password</label>
-            <input className="form-input" type="password" placeholder="••••••••"
+            <input className="form-input" type={showPassword ? "text" : "password"} placeholder="••••••••"
               value={password} onChange={e => setPassword(e.target.value)}/>
+            <button type="button" className="password-toggle-btn" onClick={() => setShowPassword(prev => !prev)}>
+              <img src={showPassword ? eyeOpenIcon : eyeCloseIcon} alt={showPassword ? "Hide password" : "Show password"} />
+            </button>
           </div>
         </div>
  

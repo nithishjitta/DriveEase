@@ -1,273 +1,210 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const STATUS_CONFIG = {
-  Confirmed: { color: "var(--green)",  bg: "rgba(61,207,130,0.08)",  border: "rgba(61,207,130,0.2)",  label: "Confirmed" },
-  Pending:   { color: "#F5A623",        bg: "rgba(245,166,35,0.08)",  border: "rgba(245,166,35,0.2)",  label: "Pending"   },
-  Cancelled: { color: "var(--red)",    bg: "rgba(224,82,82,0.08)",   border: "rgba(224,82,82,0.2)",   label: "Cancelled" },
-  Completed: { color: "var(--muted)",  bg: "var(--surface2)",        border: "var(--border)",         label: "Completed" },
+const BOOKINGS = [
+  { id:1, car:"Toyota Camry",  image:"https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=500&q=80", pickup:"Jul 15, 2024", returnD:"Jul 18, 2024", location:"Hyderabad", status:"Confirmed", total:12600, days:3, host:"Rahul M.", hostAvatar:"https://i.pravatar.cc/40?img=12" },
+  { id:2, car:"Honda Accord",  image:"https://images.unsplash.com/photo-1617788138017-80ad40651399?w=500&q=80", pickup:"Aug 01, 2024", returnD:"Aug 03, 2024", location:"Mumbai",    status:"Pending",   total:7200,  days:2, host:"Priya S.", hostAvatar:"https://i.pravatar.cc/40?img=5"  },
+  { id:3, car:"BMW 5 Series",  image:"https://images.unsplash.com/photo-1555215695-3004980ad54e?w=500&q=80", pickup:"Jun 10, 2024", returnD:"Jun 12, 2024", location:"Bangalore",  status:"Completed", total:19600, days:2, host:"Arun K.", hostAvatar:"https://i.pravatar.cc/40?img=8"  },
+  { id:4, car:"Maruti Swift",  image:"https://images.unsplash.com/photo-1549317661-bd32c8ce0729?w=500&q=80", pickup:"May 05, 2024", returnD:"May 08, 2024", location:"Delhi",      status:"Completed", total:5400,  days:3, host:"Sneha D.", hostAvatar:"https://i.pravatar.cc/40?img=9"  },
+  { id:5, car:"Hyundai i20",   image:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=500&q=80", pickup:"Apr 20, 2024", returnD:"Apr 22, 2024", location:"Chennai",    status:"Cancelled", total:4800,  days:2, host:"Vikram R.", hostAvatar:"https://i.pravatar.cc/40?img=15" },
+];
+
+const STATUS = {
+  Confirmed:{ color:"#3DCF82", bg:"rgba(61,207,130,.09)",  border:"rgba(61,207,130,.22)" },
+  Pending:  { color:"#F5A623", bg:"rgba(245,166,35,.09)",  border:"rgba(245,166,35,.22)" },
+  Completed:{ color:"#7A7A8A", bg:"rgba(122,122,138,.09)", border:"rgba(122,122,138,.18)" },
+  Cancelled:{ color:"#E05252", bg:"rgba(224,82,82,.09)",   border:"rgba(224,82,82,.22)" },
 };
 
-function MyBooking() {
-  const [bookings, setBookings] = useState([]);
-  const [activeFilter, setActiveFilter] = useState("All");
+function Badge({ status }) {
+  const s = STATUS[status] || STATUS.Pending;
+  return (
+    <span style={{ display:"inline-flex", alignItems:"center", gap:5, background:s.bg, border:`1px solid ${s.border}`, borderRadius:20, padding:"4px 12px", fontSize:11, fontWeight:700, color:s.color, whiteSpace:"nowrap" }}>
+      <span style={{ width:5, height:5, borderRadius:"50%", background:s.color }} />{status}
+    </span>
+  );
+}
 
-  const fetchBookings = async () => {
-    setBookings([
-      {
-        id: 1,
-        car: "Toyota Camry",
-        type: "Sedan",
-        image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&q=80",
-        date: "2024-07-15",
-        returnDate: "2024-07-18",
-        status: "Confirmed",
-        price: 4200,
-        days: 3,
-        city: "Hyderabad",
-        bookingId: "DE-001234",
-      },
-      {
-        id: 2,
-        car: "Honda Accord",
-        type: "Sedan",
-        image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&q=80",
-        date: "2024-08-01",
-        returnDate: "2024-08-03",
-        status: "Pending",
-        price: 3600,
-        days: 2,
-        city: "Mumbai",
-        bookingId: "DE-001235",
-      },
-      {
-        id: 3,
-        car: "BMW 5 Series",
-        type: "Luxury",
-        image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&q=80",
-        date: "2024-06-10",
-        returnDate: "2024-06-12",
-        status: "Completed",
-        price: 9800,
-        days: 2,
-        city: "Bangalore",
-        bookingId: "DE-001198",
-      },
-      {
-        id: 4,
-        car: "Hyundai Creta",
-        type: "SUV",
-        image: "https://images.unsplash.com/photo-1543796076-c8a8a6213d9e?w=600&q=80",
-        date: "2024-09-05",
-        returnDate: "2024-09-08",
-        status: "Cancelled",
-        price: 5100,
-        days: 3,
-        city: "Delhi",
-        bookingId: "DE-001267",
-      },
-    ]);
-  };
+const FILTERS = ["All","Confirmed","Pending","Completed","Cancelled"];
 
-  useEffect(() => { fetchBookings(); }, []);
+export default function MyBooking({ user }) {
+  const [filter, setFilter]   = useState("All");
+  const [expanded, setExpanded] = useState(null);
+  const navigate = useNavigate();
 
-  const filters = ["All", "Confirmed", "Pending", "Completed", "Cancelled"];
+  const shown = filter === "All" ? BOOKINGS : BOOKINGS.filter(b => b.status === filter);
 
-  const filtered = activeFilter === "All"
-    ? bookings
-    : bookings.filter(b => b.status === activeFilter);
-
-  const formatDate = (d) => new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  const counts = FILTERS.reduce((acc, f) => ({
+    ...acc,
+    [f]: f === "All" ? BOOKINGS.length : BOOKINGS.filter(b => b.status === f).length,
+  }), {});
 
   return (
     <div className="page">
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "48px 48px 80px" }}>
+      <style>{`
+        .bk-card{transition:border-color .2s,box-shadow .2s}
+        .bk-card:hover{border-color:rgba(212,168,83,.28)!important;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+        .bk-pill:hover{border-color:rgba(212,168,83,.5)!important;color:var(--text)!important}
+        .bk-btn:hover{background:var(--gold2)!important;transform:translateY(-1px)}
+        .bk-ghost:hover{border-color:var(--gold)!important;color:var(--gold)!important}
+        @keyframes bkIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .bk-fade{animation:bkIn .32s ease both}
+        .bk-detail{overflow:hidden;transition:max-height .35s ease,opacity .3s ease}
+      `}</style>
 
-        {/* ── HEADER ── */}
-        <div style={{ marginBottom: 36 }}>
-          <div className="section-eyebrow" style={{ marginBottom: 8 }}>My Bookings</div>
-          <h2 className="section-title">View and Manage Your Bookings</h2>
+      <div style={{ maxWidth:920, margin:"0 auto", padding:"52px 24px 80px" }}>
+
+        {/* Header */}
+        <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:32, flexWrap:"wrap", gap:16 }}>
+          <div>
+            <h1 style={{ fontFamily:"'Syne',sans-serif", fontSize:"clamp(22px,3vw,30px)", fontWeight:900, letterSpacing:"-0.8px", marginBottom:6 }}>My Bookings</h1>
+            <div style={{ fontSize:13, color:"var(--muted)" }}>Track and manage all your car rentals in one place.</div>
+          </div>
+          <button onClick={() => navigate("/")} style={{ display:"flex", alignItems:"center", gap:7, background:"var(--gold)", border:"none", borderRadius:10, padding:"10px 20px", fontSize:13, fontWeight:800, color:"#08090C", cursor:"pointer", fontFamily:"'Syne',sans-serif", transition:"all .18s" }}
+            onMouseEnter={e => e.currentTarget.style.background="var(--gold2)"}
+            onMouseLeave={e => e.currentTarget.style.background="var(--gold)"}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Book a Car
+          </button>
         </div>
 
-        {/* ── SUMMARY CARDS ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 36 }}>
+        {/* Summary pills */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:28 }}>
           {[
-            { label: "Total Bookings", value: bookings.length, icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, color: "var(--gold)" },
-            { label: "Confirmed",      value: bookings.filter(b => b.status === "Confirmed").length,  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>, color: "var(--green)" },
-            { label: "Pending",        value: bookings.filter(b => b.status === "Pending").length,    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, color: "#F5A623" },
-            { label: "Total Spent",    value: `₹${bookings.filter(b => b.status !== "Cancelled").reduce((s, b) => s + b.price * b.days, 0).toLocaleString("en-IN")}`, icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>, color: "var(--gold)" },
+            { label:"Total Bookings",  value:BOOKINGS.length,                                       color:"var(--gold)"  },
+            { label:"Upcoming",        value:BOOKINGS.filter(b=>b.status==="Confirmed").length,      color:"#3DCF82"      },
+            { label:"Completed",       value:BOOKINGS.filter(b=>b.status==="Completed").length,      color:"var(--muted)" },
+            { label:"Total Spent",     value:`₹${BOOKINGS.reduce((s,b)=>s+b.total,0).toLocaleString("en-IN")}`, color:"var(--gold)" },
           ].map(s => (
-            <div key={s.label} style={{
-              background: "var(--surface)", border: "1px solid var(--border)",
-              borderRadius: 16, padding: "20px 20px",
-              transition: "border-color .2s, transform .2s",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(212,168,83,0.3)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; }}
-            >
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                <div style={{ fontSize: 12, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>{s.label}</div>
-                <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(212,168,83,0.08)", border: "1px solid rgba(212,168,83,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: s.color }}>
-                  {s.icon}
-                </div>
-              </div>
-              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 26, fontWeight: 800, color: s.color }}>{s.value}</div>
+            <div key={s.label} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, padding:"16px 18px", textAlign:"center" }}>
+              <div style={{ fontFamily:"'Syne',sans-serif", fontSize:22, fontWeight:900, color:s.color, marginBottom:4 }}>{s.value}</div>
+              <div style={{ fontSize:11, color:"var(--muted)", textTransform:"uppercase", letterSpacing:".8px", fontWeight:700 }}>{s.label}</div>
             </div>
           ))}
         </div>
 
-        {/* ── FILTER PILLS ── */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 28, flexWrap: "wrap" }}>
-          {filters.map(f => (
-            <button key={f} onClick={() => setActiveFilter(f)} style={{
-              padding: "7px 18px", borderRadius: 40, border: "1px solid",
-              borderColor: activeFilter === f ? "var(--gold)" : "var(--border)",
-              background: activeFilter === f ? "rgba(212,168,83,0.1)" : "transparent",
-              color: activeFilter === f ? "var(--gold)" : "var(--muted)",
-              fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all .2s",
+        {/* Filter pills */}
+        <div style={{ display:"flex", gap:8, marginBottom:22, flexWrap:"wrap" }}>
+          {FILTERS.map(f => (
+            <button key={f} className="bk-pill" onClick={() => setFilter(f)} style={{
+              padding:"7px 16px", borderRadius:20, cursor:"pointer", fontSize:12, fontWeight:700,
+              border:`1px solid ${filter===f ? "var(--gold)" : "var(--border)"}`,
+              background: filter===f ? "rgba(212,168,83,.1)" : "transparent",
+              color:      filter===f ? "var(--gold)"         : "var(--muted)",
+              transition:"all .15s",
             }}>
-              {f}
-              {f !== "All" && (
-                <span style={{ marginLeft: 6, fontSize: 11, opacity: 0.7 }}>
-                  ({bookings.filter(b => b.status === f).length})
-                </span>
-              )}
+              {f} <span style={{ opacity:.7 }}>({counts[f]})</span>
             </button>
           ))}
         </div>
 
-        {/* ── BOOKING CARDS ── */}
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 0", color: "var(--muted)" }}>
-            <div style={{ marginBottom: 16 }}>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}>
-                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
+        {/* Booking cards */}
+        <div className="bk-fade" style={{ display:"flex", flexDirection:"column", gap:16 }}>
+          {shown.length === 0 && (
+            <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, padding:56, textAlign:"center" }}>
+              <div style={{ fontSize:48, marginBottom:14 }}>📭</div>
+              <div style={{ fontFamily:"'Syne',sans-serif", fontSize:17, fontWeight:700, marginBottom:6 }}>No {filter} bookings</div>
+              <div style={{ fontSize:13, color:"var(--muted)", marginBottom:20 }}>Ready for your next trip?</div>
+              <button onClick={() => navigate("/")} style={{ background:"var(--gold)", border:"none", borderRadius:10, padding:"11px 24px", fontSize:13, fontWeight:800, color:"#08090C", cursor:"pointer", fontFamily:"'Syne',sans-serif" }}>
+                Browse Cars
+              </button>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 600 }}>No {activeFilter !== "All" ? activeFilter.toLowerCase() : ""} bookings found</div>
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {filtered.map(booking => {
-              const st = STATUS_CONFIG[booking.status] || STATUS_CONFIG.Pending;
-              return (
-                <div key={booking.id} style={{
-                  background: "var(--surface)", border: "1px solid var(--border)",
-                  borderRadius: 20, overflow: "hidden",
-                  display: "grid", gridTemplateColumns: "200px 1fr auto",
-                  transition: "border-color .2s, transform .2s",
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(212,168,83,0.25)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; }}
-                >
-                  {/* Car image */}
-                  <div style={{ position: "relative", overflow: "hidden" }}>
-                    <img
-                      src={booking.image}
-                      alt={booking.car}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform .4s ease" }}
-                      onMouseEnter={e => e.target.style.transform = "scale(1.05)"}
-                      onMouseLeave={e => e.target.style.transform = "scale(1)"}
-                    />
-                    <div style={{ position: "absolute", top: 10, left: 10, background: "rgba(8,9,12,0.7)", backdropFilter: "blur(8px)", border: "1px solid rgba(212,168,83,0.3)", borderRadius: 30, padding: "3px 10px", fontSize: 10, fontWeight: 700, color: "var(--gold)", letterSpacing: ".5px" }}>
-                      {booking.type}
-                    </div>
+          )}
+
+          {shown.map(b => {
+            const open = expanded === b.id;
+            return (
+              <div key={b.id} className="bk-card" style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, overflow:"hidden" }}>
+
+                {/* Main row */}
+                <div style={{ display:"grid", gridTemplateColumns:"180px 1fr auto", minHeight:150 }}>
+                  {/* Image */}
+                  <div style={{ overflow:"hidden", position:"relative", flexShrink:0 }}>
+                    <img src={b.image} alt={b.car} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
+                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(90deg,transparent 55%,rgba(0,0,0,.2))" }} />
                   </div>
 
-                  {/* Booking details */}
-                  <div style={{ padding: "24px 28px" }}>
-                    {/* Top row */}
-                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
-                      <div>
-                        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800, marginBottom: 4 }}>{booking.car}</div>
-                        <div style={{ fontSize: 12, color: "var(--muted)", display: "flex", alignItems: "center", gap: 5 }}>
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                          {booking.city}
-                        </div>
+                  {/* Info */}
+                  <div style={{ padding:"20px 24px", display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
+                    <div>
+                      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10, flexWrap:"wrap" }}>
+                        <span style={{ fontFamily:"'Syne',sans-serif", fontSize:18, fontWeight:800 }}>{b.car}</span>
+                        <Badge status={b.status} />
                       </div>
-                      {/* Status badge */}
-                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: st.bg, border: `1px solid ${st.border}`, borderRadius: 30, padding: "4px 12px" }}>
-                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: st.color }} />
-                        <span style={{ fontSize: 12, fontWeight: 700, color: st.color }}>{st.label}</span>
-                      </div>
-                    </div>
-
-                    {/* Info grid */}
-                    <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
-                      {[
-                        { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "Pickup", value: formatDate(booking.date) },
-                        { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "Return", value: formatDate(booking.returnDate) },
-                        { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, label: "Duration", value: `${booking.days} day${booking.days > 1 ? "s" : ""}` },
-                        { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>, label: "Booking ID", value: booking.bookingId },
-                      ].map(item => (
-                        <div key={item.label}>
-                          <div style={{ fontSize: 11, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.8px", fontWeight: 700, marginBottom: 4, display: "flex", alignItems: "center", gap: 5 }}>
-                            <span style={{ color: "var(--gold)" }}>{item.icon}</span>
-                            {item.label}
+                      <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                        {[["📍",b.location],["📅",`${b.pickup} → ${b.returnD}`],["⏱",`${b.days} day${b.days>1?"s":""}`]].map(([icon,val]) => (
+                          <div key={val} style={{ display:"flex", alignItems:"center", gap:5, background:"var(--surface2)", border:"1px solid var(--border)", borderRadius:8, padding:"5px 11px", fontSize:12, fontWeight:600 }}>
+                            <span>{icon}</span><span>{val}</span>
                           </div>
-                          <div style={{ fontSize: 13, fontWeight: 600 }}>{item.value}</div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Host */}
+                    <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:12 }}>
+                      <img src={b.hostAvatar} alt={b.host} style={{ width:28, height:28, borderRadius:"50%", objectFit:"cover", border:"1px solid var(--border)" }} />
+                      <span style={{ fontSize:12, color:"var(--muted)" }}>Hosted by <strong style={{ color:"var(--text)" }}>{b.host}</strong></span>
                     </div>
                   </div>
 
-                  {/* Right — price + actions */}
-                  <div style={{ padding: "24px 24px", borderLeft: "1px solid var(--border)", display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "space-between", minWidth: 160 }}>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: 11, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>Total</div>
-                      <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, color: "var(--gold)" }}>
-                        ₹{(booking.price * booking.days).toLocaleString("en-IN")}
-                      </div>
-                      <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>₹{booking.price.toLocaleString("en-IN")}/day</div>
+                  {/* Price + actions */}
+                  <div style={{ padding:20, borderLeft:"1px solid var(--border)", display:"flex", flexDirection:"column", justifyContent:"space-between", minWidth:148 }}>
+                    <div>
+                      <div style={{ fontSize:10, color:"var(--muted)", textTransform:"uppercase", letterSpacing:"1px", fontWeight:700, marginBottom:4 }}>Total Paid</div>
+                      <div style={{ fontFamily:"'Syne',sans-serif", fontSize:22, fontWeight:900, color:"var(--gold)" }}>₹{b.total.toLocaleString("en-IN")}</div>
+                      <div style={{ fontSize:11, color:"var(--muted)", marginTop:2 }}>₹{Math.round(b.total/b.days).toLocaleString("en-IN")}/day</div>
                     </div>
 
-                    {/* Action buttons */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%" }}>
-                      <button style={{
-                        width: "100%", padding: "9px 0", borderRadius: 10,
-                        background: "var(--gold)", color: "#08090C",
-                        border: "none", fontSize: 12, fontWeight: 700,
-                        cursor: "pointer", transition: "all .2s",
-                      }}
-                        onMouseEnter={e => e.currentTarget.style.background = "var(--gold2)"}
-                        onMouseLeave={e => e.currentTarget.style.background = "var(--gold)"}
+                    <div style={{ display:"flex", flexDirection:"column", gap:7, marginTop:12 }}>
+                      <button className="bk-btn" style={{ background:"var(--gold)", color:"#08090C", border:"none", borderRadius:9, padding:"9px 0", fontSize:12, fontWeight:800, cursor:"pointer", fontFamily:"'Syne',sans-serif", transition:"all .18s" }}
+                        onClick={() => setExpanded(open ? null : b.id)}
                       >
-                        View Details
+                        {open ? "Hide Details" : "View Details"}
                       </button>
-                      {booking.status === "Confirmed" || booking.status === "Pending" ? (
-                        <button style={{
-                          width: "100%", padding: "9px 0", borderRadius: 10,
-                          background: "transparent", color: "var(--red)",
-                          border: "1px solid rgba(224,82,82,0.3)", fontSize: 12, fontWeight: 700,
-                          cursor: "pointer", transition: "all .2s",
-                        }}
-                          onMouseEnter={e => { e.currentTarget.style.background = "rgba(224,82,82,0.08)"; e.currentTarget.style.borderColor = "var(--red)"; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(224,82,82,0.3)"; }}
-                        >
+                      {b.status === "Completed" && (
+                        <button className="bk-ghost" style={{ background:"transparent", border:"1px solid var(--border)", borderRadius:9, padding:"8px 0", fontSize:11, fontWeight:700, cursor:"pointer", color:"var(--text)", transition:"all .18s" }}>
+                          Rebook
+                        </button>
+                      )}
+                      {b.status === "Pending" && (
+                        <button style={{ background:"transparent", border:"1px solid rgba(224,82,82,.25)", borderRadius:9, padding:"8px 0", fontSize:11, fontWeight:700, cursor:"pointer", color:"var(--red)", transition:"all .18s" }}>
                           Cancel
                         </button>
-                      ) : booking.status === "Completed" ? (
-                        <button style={{
-                          width: "100%", padding: "9px 0", borderRadius: 10,
-                          background: "transparent", color: "var(--gold)",
-                          border: "1px solid rgba(212,168,83,0.3)", fontSize: 12, fontWeight: 700,
-                          cursor: "pointer", transition: "all .2s",
-                        }}
-                          onMouseEnter={e => { e.currentTarget.style.background = "rgba(212,168,83,0.08)"; e.currentTarget.style.borderColor = "var(--gold)"; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(212,168,83,0.3)"; }}
-                        >
-                          Book Again
+                      )}
+                      {b.status === "Completed" && (
+                        <button style={{ background:"transparent", border:"1px solid rgba(245,166,35,.25)", borderRadius:9, padding:"8px 0", fontSize:11, fontWeight:700, cursor:"pointer", color:"#F5A623", transition:"all .18s" }}>
+                          ★ Rate Trip
                         </button>
-                      ) : null}
+                      )}
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+
+                {/* Expandable details */}
+                {open && (
+                  <div style={{ borderTop:"1px solid var(--border)", padding:"20px 24px", background:"var(--surface2)", display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16 }}>
+                    {[
+                      ["Booking ID",    `#DRV-${String(b.id).padStart(5,"0")}`],
+                      ["Pickup Date",   b.pickup],
+                      ["Return Date",   b.returnD],
+                      ["Duration",      `${b.days} days`],
+                      ["Location",      b.location],
+                      ["Payment",       "Paid Online"],
+                    ].map(([label, value]) => (
+                      <div key={label} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:10, padding:"12px 14px" }}>
+                        <div style={{ fontSize:10, color:"var(--muted)", textTransform:"uppercase", letterSpacing:"1px", fontWeight:700, marginBottom:4 }}>{label}</div>
+                        <div style={{ fontSize:13, fontWeight:700 }}>{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
-
-export default MyBooking;

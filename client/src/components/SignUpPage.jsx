@@ -1,25 +1,30 @@
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import eyeOpenIcon from "../assets/eye_icon.svg";
+import eyeCloseIcon from "../assets/eye_close_icon.svg";
 
 function SignUpPage({ setPage, setUser }) {
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
+    firstname: "",
+    lastname: "",
     email: "",
-    phone: "",
+    contact: "",
     password: "",
     confirm: "",
     agree: false,
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError("");
-    if (!form.firstName || !form.email || !form.password) {
+    if (!form.firstname || !form.email || !form.password) {
       setError("Please fill in all required fields.");
       return;
     }
@@ -39,11 +44,30 @@ function SignUpPage({ setPage, setUser }) {
       setError("Please accept the terms to continue.");
       return;
     }
-    setLoading(true);
-    setTimeout(() => {
-      setUser({ name: form.firstName, email: form.email });
-      setPage("home");
-    }, 1400);
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("firstname", form.firstname);
+      formData.append("lastname", form.lastname);
+      formData.append("email", form.email);
+      formData.append("contact", form.contact);
+      formData.append("password", form.password);
+      if (form.image) formData.append("image", form.image);
+
+      const res = await fetch("http://localhost:3000/signup", {
+        method: "POST",
+        body: formData, // no Content-Type header needed!
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUser({ email: form.email });
+        navigate("/signin");
+      }
+    } catch (err) {
+      setError("Error creating account. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -110,8 +134,8 @@ function SignUpPage({ setPage, setUser }) {
               <input
                 className="form-input"
                 placeholder="Arjun"
-                value={form.firstName}
-                onChange={(e) => set("firstName", e.target.value)}
+                value={form.firstname}
+                onChange={(e) => set("firstname", e.target.value)}
               />
             </div>
             <div className="form-field">
@@ -119,8 +143,8 @@ function SignUpPage({ setPage, setUser }) {
               <input
                 className="form-input"
                 placeholder="Sharma"
-                value={form.lastName}
-                onChange={(e) => set("lastName", e.target.value)}
+                value={form.lastname}
+                onChange={(e) => set("lastname", e.target.value)}
               />
             </div>
           </div>
@@ -140,30 +164,50 @@ function SignUpPage({ setPage, setUser }) {
               className="form-input"
               type="tel"
               placeholder="+91 98765 43210"
-              value={form.phone}
-              onChange={(e) => set("phone", e.target.value)}
+              value={form.contact}
+              onChange={(e) => set("contact", e.target.value)}
             />
           </div>
           <div className="form-row">
-            <div className="form-field">
+            <div className="form-field password-field">
               <label className="form-label">Password *</label>
               <input
                 className="form-input"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Min 6 chars"
                 value={form.password}
                 onChange={(e) => set("password", e.target.value)}
               />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                <img
+                  src={showPassword ? eyeOpenIcon : eyeCloseIcon}
+                  alt={showPassword ? "Hide password" : "Show password"}
+                />
+              </button>
             </div>
-            <div className="form-field">
+            <div className="form-field password-field">
               <label className="form-label">Confirm *</label>
               <input
                 className="form-input"
-                type="password"
+                type={showConfirm ? "text" : "password"}
                 placeholder="Repeat password"
                 value={form.confirm}
                 onChange={(e) => set("confirm", e.target.value)}
               />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowConfirm((prev) => !prev)}
+              >
+                <img
+                  src={showConfirm ? eyeOpenIcon : eyeCloseIcon}
+                  alt={showConfirm ? "Hide password" : "Show password"}
+                />
+              </button>
             </div>
           </div>
           <div className="form-field">
@@ -290,6 +334,7 @@ function SignUpPage({ setPage, setUser }) {
                   if (file) {
                     const url = URL.createObjectURL(file);
                     set("avatarPreview", url);
+                    set("image", file);
                   }
                 }}
               />
